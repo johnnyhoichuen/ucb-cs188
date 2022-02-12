@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -113,6 +113,10 @@ class SearchAgent(Agent):
         starttime = time.time()
         problem = self.searchType(state) # Makes a new search problem
         self.actions  = self.searchFunction(problem) # Find a path
+
+        # print("\nsearch func: ", type(self.searchFunction))
+        # print("actions in registerInitialState", self.actions, "\n")
+
         totalCost = problem.getCostOfActions(self.actions)
         print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
         if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
@@ -126,6 +130,9 @@ class SearchAgent(Agent):
         state: a GameState object (pacman.py)
         """
         if 'actionIndex' not in dir(self): self.actionIndex = 0
+
+        # print("actions: ", self.actions)
+
         i = self.actionIndex
         self.actionIndex += 1
         if i < len(self.actions):
@@ -289,12 +296,25 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
+
+
+
+
+
+
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
+
+
+
+
+
+
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -302,6 +322,12 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+
+
+
+
+
+
         util.raiseNotDefined()
 
     def getSuccessors(self, state):
@@ -325,6 +351,12 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+
+
+
+
+
+
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -360,6 +392,12 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+
+
+
+
+
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):

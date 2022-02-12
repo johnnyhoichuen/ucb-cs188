@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -587,6 +587,7 @@ class Game:
                 self.mute(i)
                 if self.catchExceptions:
                     try:
+                        print("timeout func with register init state")
                         timed_func = TimeoutFunction(agent.registerInitialState, int(self.rules.getMaxStartupTime(i)))
                         try:
                             start_time = time.time()
@@ -604,6 +605,9 @@ class Game:
                         self.unmute()
                         return
                 else:
+                    # print("no catch exception with registerInitialState")
+                    # print("printing state")
+                    # print(type(self.state.deepCopy()))
                     agent.registerInitialState(self.state.deepCopy())
                 ## TODO: could this exceed the total time
                 self.unmute()
