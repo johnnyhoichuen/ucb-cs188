@@ -20,6 +20,7 @@ Pacman agents (in searchAgents.py).
 from importlib.resources import path
 import queue
 from tracemalloc import start
+from turtle import st
 from matplotlib.cbook import Stack
 from sqlalchemy import null
 from game import Directions
@@ -183,45 +184,72 @@ def recursiveDfs(visitedNodes, stack, node, problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-
     queue = util.Queue()
     # path = util.Queue()
     visitedNodes = []
     startNode = problem.getStartState()
 
     queue.push([startNode, []])
-    visitedNodes.append(startNode)
 
     while not queue.isEmpty():
-        # print("\nqueue list: ", queue.list)
-
         # nodeWithPath: [pos1, path to pos1]
-        nodeWithPath = queue.pop()
+        state, path = queue.pop()
 
-        # print("nodeWithPath: ", nodeWithPath)
-        # print("nodeWithPath[0]: ", nodeWithPath[0])
-        # print("nodeWithPath[0][0]: ", nodeWithPath[0][0])
-        successors = problem.getSuccessors(nodeWithPath[0][0])
-        # print("successors: ", successors)
+        print(state)
 
         # return is
-        if problem.isGoalState(nodeWithPath[0]):
+        if problem.isGoalState(state):
             print("\nGoal found: ")
-            print(nodeWithPath[1])
-            return nodeWithPath[1]
+            print(path)
+            return path
+        else:
+            print('goal not found')
 
-        # loop thru possible next step
-        for suc in successors:
-            # check if visited
-            if not suc[0] in visitedNodes:
+        if not state in visitedNodes:
+            # update visited notes
+            visitedNodes.append(state)
+            print(state, " appended to visitedNodes")
+
+            # loop thru possible next step
+            for suc in problem.getSuccessors(state):
+                print("looping suc: ", suc)
+
                 # update the path with (pos, path to reach pos)
-                pathToSuc = (nodeWithPath[1] + [suc[1]])
+                pathToSuc = (path + [suc[1]])
                 # print("pathToSuc: ", pathToSuc)
                 queue.push([suc[0], pathToSuc])
 
-                # update visited notes
-                visitedNodes.append(suc[0])
 
+    ########
+    # backup
+    ########
+    # while not queue.isEmpty():
+    #     # nodeWithPath: [pos1, path to pos1]
+    #     nodeWithPath = queue.pop()
+
+    #     # print("nodeWithPath: ", nodeWithPath)
+    #     # print("nodeWithPath[0]: ", nodeWithPath[0])
+    #     # print("nodeWithPath[0][0]: ", nodeWithPath[0][0])
+    #     successors = problem.getSuccessors(nodeWithPath[0][0])
+    #     # print("successors: ", successors)
+
+    #     # return is
+    #     if problem.isGoalState(nodeWithPath[0]):
+    #         print("\nGoal found: ")
+    #         print(nodeWithPath[1])
+    #         return nodeWithPath[1]
+
+    #     # loop thru possible next step
+    #     for suc in successors:
+    #         # check if visited
+    #         if not suc[0] in visitedNodes:
+    #             # update the path with (pos, path to reach pos)
+    #             pathToSuc = (nodeWithPath[1] + [suc[1]])
+    #             # print("pathToSuc: ", pathToSuc)
+    #             queue.push([suc[0], pathToSuc])
+
+    #             # update visited notes
+    #             visitedNodes.append(suc[0])
 
 
     # fringe = util.Queue()
@@ -247,81 +275,180 @@ def uniformCostSearch(problem):
 
     queue = util.PriorityQueue()
     visitedNodes = []
-    startNode = problem.getStartState()
+    # startState = problem.getStartState()
 
-    queue.push([[startNode, None, 1], [], 0], 0) # both 0 here represents the priority to this path
-    visitedNodes.append(startNode)
-
-    # count = 4
-    # count2 = 4
-    while not queue.isEmpty():
-    # while count > 0:
-    #     count -= 1
-        # print("\nqueue list: ", queue.list)
-
-        ########
-        # nodeWithPath: [[pos1, path to pos1], cost]
-        ########
-        nodeWithPath = queue.pop()
-        print("\nnode with path: ", nodeWithPath)
-        # print("nodeWithPath[0]: ", nodeWithPath[0])
-        # print("nodeWithPath[0][0]: ", nodeWithPath[0][0])
-        successors = problem.getSuccessors(nodeWithPath[0][0])
-
-        if problem.isGoalState(nodeWithPath[0][0]):
-            print("\nGoal found: ")
-            print(nodeWithPath[1])
-            return nodeWithPath[1]
-
-        # loop thru possible next step
-        for suc in successors:
-            # check if visited
-            if not suc[0] in visitedNodes:
-                print("looping suc: ", suc[0])
-
-                # update the path with (pos, path to reach pos)
-                pathToSuc = (nodeWithPath[1] + [suc[1]])
-                # print("pathToSuc: ", pathToSuc)
-
-                # print("cost of path to current node: ", nodeWithPath[2])
-                # print("cost of successor: ", suc[2])
-                costToPath = nodeWithPath[2] + suc[2]
-                print("cost of path to successor: ", costToPath)
-                queue.push([suc, pathToSuc, costToPath], costToPath)
-
-                # print("delete afterwards, cost of path of successor: ", costToPath)
-                # count2 -= 1
-
-                # update visited notes
-                visitedNodes.append(suc[0])
-
-
-
+    # queue.push([[startState, None, 1], [], 0], 0) # both 0 here represents the priority to this path
+    # visitedNodes.append(startState)
 
     # while not queue.isEmpty():
     #     # print("\nqueue list: ", queue.list)
 
+    #     ########
     #     # nodeWithPath: [[pos1, path to pos1], cost]
+    #     ########
     #     nodeWithPath = queue.pop()
-    #     successors = problem.getSuccessors(nodeWithPath[0])
+    #     # print("\nnode with path: ", nodeWithPath)
+    #     # print("nodeWithPath[0]: ", nodeWithPath[0])
+    #     # print("nodeWithPath[0][0]: ", nodeWithPath[0][0])
+    #     successors = problem.getSuccessors(nodeWithPath[0][0])
 
-    #     if problem.isGoalState(nodeWithPath[0]):
+    #     if problem.isGoalState(nodeWithPath[0][0]):
     #         print("\nGoal found: ")
     #         print(nodeWithPath[1])
     #         return nodeWithPath[1]
 
+    #     # # loop thru possible next step
+    #     # if problem.getSuccessors(nodeWithPath[0][0]) not in visitedNodes:
+    #     #     for suc in successors:
+    #     #         # # check if visited
+    #     #         # if not suc[0] in visitedNodes:
+    #     #         # print("looping suc: ", suc[0])
+
+    #     #         # update the path with (pos, path to reach pos)
+    #     #         pathToSuc = (nodeWithPath[1] + [suc[1]])
+    #     #         # print("pathToSuc: ", pathToSuc)
+    #     #         # print("cost of path to current node: ", nodeWithPath[2])
+    #     #         # print("cost of successor: ", suc[2])
+    #     #         costToPath = nodeWithPath[2] + suc[2]
+    #     #         queue.push([suc, pathToSuc, costToPath], costToPath)
+
+    #     #         # print("delete afterwards, cost of path of successor: ", costToPath)
+    #     #         # count2 -= 1
+
+    #     #         # update visited notes
+    #     #         visitedNodes.append(suc[0])
+
     #     # loop thru possible next step
     #     for suc in successors:
-    #         # check if visited
+    #         # # check if visited
     #         if not suc[0] in visitedNodes:
+    #             # print("looping suc: ", suc[0])
+
     #             # update the path with (pos, path to reach pos)
     #             pathToSuc = (nodeWithPath[1] + [suc[1]])
     #             # print("pathToSuc: ", pathToSuc)
-    #             queue.push([suc[0], pathToSuc], [nodeWithPath[1], suc[2]])
+    #             # print("cost of path to current node: ", nodeWithPath[2])
+    #             # print("cost of successor: ", suc[2])
+    #             costToPath = nodeWithPath[2] + suc[2]
+    #             queue.push([suc, pathToSuc, costToPath], costToPath)
+
+    #             # print("delete afterwards, cost of path of successor: ", costToPath)
+    #             # count2 -= 1
 
     #             # update visited notes
     #             visitedNodes.append(suc[0])
 
+
+
+
+
+
+    # ####
+    # # refined codes
+    # # passed the maze, did not pass the auto grader
+    # ####
+    # startNode = Node(problem.getStartState(), [], 0)
+    # queue.push(startNode, startNode.costToPath) # both 0 here represents the priority to this path
+    # visitedNodes.append(startNode)
+
+    # while not queue.isEmpty():
+    #     # print("\nqueue list: ", queue.list)
+
+    #     ########
+    #     # currentNode: [[pos1, path to pos1], cost]
+    #     ########
+    #     currentNode = queue.pop()
+    #     # print("current node: ", currentNode.state)
+    #     # print("successor of current node: ", problem.getSuccessors(currentNode.state))
+
+    #     if problem.isGoalState(currentNode.state):
+    #         print("\nGoal found: ")
+    #         print(currentNode.path)
+    #         return currentNode.path
+
+    #     # loop thru possible next step
+    #     for suc in problem.getSuccessors(currentNode.state):
+    #         sucState, sucDir, sucCost = suc
+    #         # print("suc: ", sucState, sucDir, sucCost)
+
+    #         # # check if visited
+    #         if not sucState in visitedNodes:
+    #             # update visited notes
+    #             visitedNodes.append(sucState)
+
+    #             # update the path with (pos, path to reach pos)
+    #             pathToSuc = (currentNode.path + [sucDir])
+    #             # print("pathToSuc: ", pathToSuc)
+    #             # print("cost of path to current node: ", nodeWithPath[2])
+    #             # print("cost of successor: ", suc[2])
+    #             costToPath = currentNode.costToPath + sucCost
+    #             queue.push(Node(suc[0], pathToSuc, costToPath), costToPath)
+
+    #             # print("delete afterwards, cost of path of successor: ", costToPath)
+    #             # count2 -= 1
+
+    # return list()
+
+
+
+
+
+    ####
+    # refined codes2
+    # fixes, add to visited nodes only when
+    ####
+    startNode = Node(problem.getStartState(), [], 0)
+    queue.push(startNode, startNode.costToPath) # both 0 here represents the priority to this path
+
+    while not queue.isEmpty():
+        currentNode = queue.pop()
+
+        if problem.isGoalState(currentNode.state):
+            print("\nGoal found: ")
+            print(currentNode.path)
+            return currentNode.path
+
+        if currentNode.state not in visitedNodes:
+            # update visited notes
+            visitedNodes.append(currentNode.state)
+
+            # loop thru possible next step
+            for suc in problem.getSuccessors(currentNode.state):
+                sucState, sucDir, sucCost = suc
+                pathToSuc = (currentNode.path + [sucDir])
+                costToPath = currentNode.costToPath + sucCost
+                queue.push(Node(sucState, pathToSuc, costToPath), costToPath)
+
+    return list()
+
+
+
+
+
+    # working example
+
+    closed = set()
+    fringe = util.PriorityQueue()
+    fringe.push(ExampleNode(problem.getStartState(), None, None), 0)
+    while fringe.isEmpty() is not True:
+        node = fringe.pop()
+        if problem.isGoalState(node.state) is True:
+            actions = list()
+            print("node.action: ", node.action)
+            while node.action is not None:
+                actions.append(node.action)
+                print("actions: ", actions)
+                node = node.pred
+                print("node.pred: ", node.pred)
+            actions.reverse()
+            print("action.reverse(): ", actions)
+            return actions
+        if node.state not in closed:
+            closed.add(node.state)
+            for s in problem.getSuccessors(node.state):
+                fringe.push(ExampleNode(s[0], node, s[1], s[2]+node.priority),\
+                            s[2]+node.priority)
+    return list()
 
     return None
 
@@ -334,8 +461,35 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    queue = util.PriorityQueue()
+    visitedNodes = []
+    startNode = Node(problem.getStartState(), [], 0)
+    queue.push(startNode, startNode.costToPath) # both 0 here represents the priority to this path
+
+    while not queue.isEmpty():
+        currentNode = queue.pop()
+
+        if problem.isGoalState(currentNode.state):
+            print("\nGoal found: ")
+            print(currentNode.path)
+            # print("shortest path: ", queue.heap)
+            # print("cost of shortest path: ", currentNode.costToPath)
+            return currentNode.path
+
+        if currentNode.state not in visitedNodes:
+            # update visited notes
+            visitedNodes.append(currentNode.state)
+
+            # loop thru possible next step
+            for suc in problem.getSuccessors(currentNode.state):
+                sucState, sucDir, sucCost = suc
+                pathToSuc = (currentNode.path + [sucDir])
+                costToPath = currentNode.costToPath + sucCost
+                print("cost to path: ", costToPath)
+                queue.push(Node(sucState, pathToSuc, costToPath), costToPath + heuristic(sucState, problem))
+
+    return list()
 
 
 # Abbreviations
@@ -343,3 +497,21 @@ bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+
+class Node:
+    def __init__(self, state, path, costToPath):
+        self.state = state
+        self.path = path
+        self.costToPath = costToPath
+
+    def __repr__(self) -> str:
+        return "State: {0}, path: {1}, cost to path: {2}".format(self.state, self.path, self.costToPath)
+
+class ExampleNode:
+    def __init__(self, state, pred, action, priority=0):
+        self.state = state
+        self.pred = pred
+        self.action = action
+        self.priority = priority
+    def __repr__(self):
+        return "State: {0}, Action: {1}".format(self.state, self.action)
