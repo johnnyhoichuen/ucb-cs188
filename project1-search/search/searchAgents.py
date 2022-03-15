@@ -34,6 +34,9 @@ description for details.
 Good luck and happy searching!
 """
 
+from turtle import update
+from sklearn.metrics import euclidean_distances
+from sqlalchemy import false, true
 from game import Directions
 from game import Agent
 from game import Actions
@@ -296,39 +299,47 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
 
-
-
-
-
-
-
-
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-
-
-
-
-
-
-        util.raiseNotDefined()
+        return self.startingPosition, self.corners
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        _, corners = state
 
+        # print("remaining corners: ", self.corners)
 
+        # if position in self.corners:
+        #     print("corner found at {} \n\n\n".format(position))
+        #     # corners = tuple(x for x in state[1] if x != (nextx, nexty))
+        #     # corners = filter(, corners)
+        #     # corners = tuple(pos for pos in corners if pos != (pos[0], pos[1]))
 
+        #     # tuple cannot be modified
+        #     # change to list then back to tuple (dumb tho)
+        #     updatedCorners = list(self.corners)
+        #     print("updated corner before removal {}".format(updatedCorners))
+        #     updatedCorners.remove(position)
+        #     print("updated corner after removal {}".format(updatedCorners))
+        #     # corners = tuple(updatedCorners)
+        #     corners = updatedCorners
+        #     print("corners {}".format(corners))
 
+        #     if not corners:
+        #         print("all corners are cleared")
+        #         return True
 
+        if not corners:
+            print("all corners are cleared")
+            return True
 
-        util.raiseNotDefined()
+        # print("corners are not cleared")
+        return False
 
     def getSuccessors(self, state):
         """
@@ -350,13 +361,47 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
+            x, y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                # corners = tuple(x for x in state[1] if x != (nextx, nexty))
 
+                if (nextx, nexty) in self.corners:
+                    # updatedCorners = list(self.corners)
+                    # updatedCorners.remove((nextx, nexty))
+                    updatedCorners = tuple(x for x in state[1] if x != (nextx, nexty))
+                    print("corner {} found. updatedCorners: {}".format((nextx, nexty), updatedCorners))
+                    nextState = ((nextx, nexty), updatedCorners)
+                    successors.append((nextState, action, 1))
 
+                    # # print("corner found at {} \n\n\n".format(position))
+                    # # corners = tuple(x for x in state[1] if x != (nextx, nexty))
+                    # # corners = filter(, corners)
+                    # # corners = tuple(pos for pos in corners if pos != (pos[0], pos[1]))
 
+                    # # tuple cannot be modified
+                    # # change to list then back to tuple (dumb tho)
+                    # updatedCorners = list(self.corners)
+                    # # print("updated corner before removal {}".format(updatedCorners))
+                    # updatedCorners.remove((nextx, nexty))
+                    # # print("updated corner after removal {}".format(updatedCorners))
+                    # # corners = tuple(updatedCorners)
+                    # corners = updatedCorners
+                    # # print("corners {}".format(corners))
 
+                    # # if not corners:
+                    # #     print("all corners are cleared")
+                    # #     return True
 
+                    # successors.append((((nextx, nexty), updatedCorners), action, 1))
+                else:
+                    successors.append((((nextx, nexty), state[1]), action, 1))
 
+                # updatedCorners = tuple(x for x in state[1] if x != (nextx, nexty))
+                # print("corner {} found. updatedCorners: {}".format((nextx, nexty), updatedCorners))
+                # nextState = ((nextx, nexty), updatedCorners)
+                # successors.append((nextState, action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -380,7 +425,7 @@ def cornersHeuristic(state, problem):
     A heuristic for the CornersProblem that you defined.
 
       state:   The current search state
-               (a data structure you chose in your search problem)
+               (a data structure you chose in yopyur search problem)
 
       problem: The CornersProblem instance for this layout.
 
@@ -392,13 +437,21 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    x, y = state[0]
 
+    # find the shortest euclidean path between any corner
+    minCost = 99999
+    for corner in corners:
+        cornerX, cornerY = corner
+        cost = ((x-cornerX)**2 + (y-cornerY)**2)**0.5
+        # abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
+        if cost < minCost:
+            minCost = cost
+        # elif cost < minCost: # how to combine with above
+        #     minCost = cost
 
-
-
-
-    return 0 # Default to trivial solution
+    return minCost  # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -491,8 +544,27 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    # print("foodGrid: \n{}, type: {}".format(foodGrid, type(foodGrid)))
+
+    foodCoordinates = foodGrid.asList()
+    # print("food coor: {}".format(foodCoordinates))
+
+    # # avoid wall direction approach
+    # for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+
+    #     dx, dy = Actions.directionToVector(direction)
+    #     nextx, nexty = int(x + dx), int(y + dy)
+
+    # manhattan dist (2/4)
+    if foodCoordinates:
+        shortestDist = util.manhattanDistance(position, foodCoordinates[0])
+        for food in foodCoordinates:
+            dist = util.manhattanDistance(position, food)
+            shortestDist = min(dist, shortestDist)
+    else:
+        shortestDist = 0
+
+    return shortestDist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -522,8 +594,25 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # print("food: {}".format(food))
+        foodCoor = food.asList()
+
+        shortestDist = 99999
+        closestDot = (99, 99)
+        for coor in foodCoor:
+            dist = euclidean_distances([coor], [startPosition])
+
+            shortestDist = min(dist, shortestDist)
+            closestDot = coor
+
+        # find path to closestDot
+
+
+        # get successor for each position
+
+        # return [(1,2)] # some path eg, ((1,1), (2,2))
+
+        return search.ucs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -558,8 +647,13 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x,y = state
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # foodCoor = self.food.asList()
+        # if foodCoor:
+        #    return True
+
+        # return False
+
+        return self.food[x][y]
 
 def mazeDistance(point1, point2, gameState):
     """

@@ -185,36 +185,32 @@ def recursiveDfs(visitedNodes, stack, node, problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     queue = util.Queue()
-    # path = util.Queue()
     visitedNodes = []
-    startNode = problem.getStartState()
+    startState = problem.getStartState()
 
-    queue.push([startNode, []])
+    queue.push([startState, []])
 
     while not queue.isEmpty():
         # nodeWithPath: [pos1, path to pos1]
         state, path = queue.pop()
+        # print("\n\nat state: ", state)
 
-        print(state)
-
-        # return is
         if problem.isGoalState(state):
-            print("\nGoal found: ")
-            print(path)
+            print("\nGoal found: {}", path)
             return path
-        else:
-            print('goal not found')
 
         if not state in visitedNodes:
             # update visited notes
             visitedNodes.append(state)
-            print(state, " appended to visitedNodes")
+            # print(state, " appended to visitedNodes")
+
+            # print(problem.getSuccessors(state)) # don't do this more than neccessary
+            # or the system will think you expanded the nodes too many times
 
             # loop thru possible next step
             for suc in problem.getSuccessors(state):
-                print("looping suc: ", suc)
+                # print("looping suc: ", suc)
 
-                # update the path with (pos, path to reach pos)
                 pathToSuc = (path + [suc[1]])
                 # print("pathToSuc: ", pathToSuc)
                 queue.push([suc[0], pathToSuc])
@@ -486,7 +482,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 sucState, sucDir, sucCost = suc
                 pathToSuc = (currentNode.path + [sucDir])
                 costToPath = currentNode.costToPath + sucCost
-                print("cost to path: ", costToPath)
+                # print("cost to path: ", costToPath)
                 queue.push(Node(sucState, pathToSuc, costToPath), costToPath + heuristic(sucState, problem))
 
     return list()

@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -703,7 +703,7 @@ class CornerHeuristicSanity(testClasses.TestCase):
         # cornerConsistencyA
         for succ in succs:
             h1 = searchAgents.cornersHeuristic(succ[0], problem)
-            if h0 - h1 > 1:
+            if h0 - h1 > 1: # h(n) > h(n+1), doesn't make sense
                 grades.addMessage('FAIL: inconsistent heuristic')
                 return False
         heuristic_cost = searchAgents.cornersHeuristic(start_state, problem)
